@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mallow Blocks: Block Puzzle</title>
+<meta name="description" content="Mallow Blocks is a cozy block puzzle with cute marshmallow friends. Clear lines, build combos, win chests and play offline.">
+<meta property="og:title" content="Mallow Blocks: Block Puzzle">
+<meta property="og:description" content="Drag, drop and clear lines with the cutest marshmallow friends.">
+<meta property="og:image" content="images/feature_graphic.png">
+<link rel="icon" href="images/playstore-icon-512.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --peach: #ffd6c2;
+    --peach-deep: #f2a283;
+    --coral: #e9806a;
+    --pillow: #ffe6ee;
+    --butter: #fff2c2;
+    --mint: #bfe8d4;
+    --sky: #cfe9ff;
+    --lilac: #e2d4ff;
+    --cocoa: #4a2e2a;
+    --cocoa-soft: #6e4f48;
+    --white: #ffffff;
+    --display: "Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+    --body: "Nunito", "Segoe UI", system-ui, sans-serif;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    font-family: var(--body);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--cocoa);
+    background: var(--peach);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  img { max-width: 100%; display: block; }
+  a { color: var(--cocoa); }
+  a:focus-visible { outline: 3px solid var(--cocoa); outline-offset: 3px; border-radius: 12px; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: calc(3rem + env(safe-area-inset-top, 0px)) 1.25rem 3rem;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,.55) 0 60px, transparent 61px),
+      radial-gradient(circle at 85% 12%, rgba(255,255,255,.45) 0 80px, transparent 81px),
+      linear-gradient(180deg, #ffe9dd 0%, var(--peach) 100%);
+  }
+  .app-icon {
+    width: 112px; height: 112px;
+    margin: 0 auto 1.2rem;
+    border-radius: 26px;
+    border: 3px solid var(--cocoa);
+    box-shadow: 0 6px 0 rgba(74,46,42,.25);
+  }
+  .title {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.4rem, 11vw, 6.5rem);
+    line-height: 0.9;
+    margin: 0 auto;
+    color: var(--white);
+    letter-spacing: 0.01em;
+    text-shadow:
+      0 2px 0 var(--pillow),
+      0 4px 0 #f7bfae,
+      0 6px 0 var(--peach-deep),
+      0 10px 18px rgba(74, 46, 42, 0.2);
+    -webkit-text-stroke: 2px var(--cocoa);
+    paint-order: stroke fill;
+  }
+  .title span { display: block; }
+  .tagline {
+    max-width: 32ch;
+    margin: 1.4rem auto 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--cocoa);
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 18px;
+    padding: 0.4rem 1rem;
+    display: inline-block;
+  }
+  .cta {
+    display: table;
+    margin: 1.4rem auto 0;
+    padding: 0.85rem 1.6rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: var(--cocoa);
+    background: var(--butter);
+    border: 3px solid var(--cocoa);
+    border-radius: 999px;
+    box-shadow: 0 5px 0 var(--cocoa);
+    text-decoration: none;
+  }
+  .cta:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--cocoa); }
+  .screenshot {
+    width: min(340px, 100%);
+    margin: 2.5rem auto 0;
+    padding: 10px;
+    background: var(--white);
+    border: 3px solid var(--cocoa);
+    border-radius: 28px;
+    box-shadow: 0 8px 0 rgba(74, 46, 42, 0.25);
+  }
+  .screenshot img { border-radius: 18px; width: 100%; height: auto; }
+
+  h2 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5vw, 2.4rem);
+    line-height: 1.1;
+    margin: 0 0 0.5rem;
+  }
+
+  /* How to play: mini 8x8 board */
+  .how { text-align: center; padding: 3rem 1.25rem 1rem; }
+  .how > p { margin: 0 auto 1.5rem; max-width: 46ch; }
+  .mini-board {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    width: min(260px, 80%);
+    margin: 0 auto;
+    padding: 8px;
+    background: var(--white);
+    border: 3px solid var(--cocoa);
+    border-radius: 20px;
+  }
+  .mini-board i {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    background: #f6ebe5;
+  }
+  .mini-board i.c1 { background: var(--coral); }
+  .mini-board i.c2 { background: var(--mint); }
+  .mini-board i.c3 { background: var(--sky); }
+  .mini-board i.c4 { background: var(--butter); }
+  .mini-board i.c5 { background: var(--lilac); }
+  .mini-board i.row { background: #ffcf5a; animation: flash 1.6s ease-in-out infinite; }
+  @keyframes flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.25); transform: scale(1.06); } }
+  @media (prefers-reduced-motion: reduce) { .mini-board i.row { animation: none; } }
+  .steps {
+    list-style: none;
+    margin: 1.75rem auto 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    max-width: 760px;
+  }
+  .steps li {
+    background: rgba(255,255,255,.75);
+    border: 3px solid var(--cocoa);
+    border-radius: 18px;
+    padding: 0.6rem 1rem;
+    font-weight: 700;
+    max-width: 220px;
+  }
+
+  /* Modes */
+  .modes { padding: 3rem 1.25rem; }
+  .modes-inner { max-width: 960px; margin: 0 auto; text-align: center; }
+  .mode-grid {
+    list-style: none;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    text-align: left;
+  }
+  @media (min-width: 760px) { .mode-grid { grid-template-columns: repeat(3, 1fr); } }
+  .mode-grid li {
+    background: var(--white);
+    border: 3px solid var(--cocoa);
+    border-radius: 22px;
+    padding: 1.25rem 1.2rem;
+  }
+  .mode-grid strong { display: block; font-family: var(--display); font-size: 1.35rem; line-height: 1.2; margin-bottom: .3rem; }
+  .mode-grid .tag { display: inline-block; font-size: .85rem; font-weight: 700; padding: .1rem .6rem; border-radius: 999px; border: 2px solid var(--cocoa); margin-bottom: .6rem; }
+  .t1 { background: var(--butter); } .t2 { background: var(--mint); } .t3 { background: var(--sky); }
+
+  /* Screenshot strip */
+  .gallery { padding: 0 0 3rem; }
+  .gallery h2 { text-align: center; padding: 0 1.25rem; }
+  .strip {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding: 1rem 1.25rem 1.25rem;
+    scroll-snap-type: x mandatory;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .strip img {
+    flex: 0 0 auto;
+    width: 200px;
+    height: auto;
+    border: 3px solid var(--cocoa);
+    border-radius: 20px;
+    background: var(--white);
+    scroll-snap-align: center;
+  }
+
+  /* Features */
+  .play { padding: 0 1.25rem 4rem; }
+  .play-card {
+    max-width: 680px;
+    margin: 0 auto;
+    background: var(--white);
+    border: 3px solid var(--cocoa);
+    border-radius: 28px;
+    padding: 2rem 1.75rem;
+  }
+  .features {
+    list-style: none;
+    margin: 1.25rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .features li {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+  .features .ico {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    border: 3px solid var(--cocoa);
+    display: grid; place-items: center;
+    font-size: 1.6rem;
+  }
+  .features strong { display: block; font-family: var(--display); font-size: 1.2rem; line-height: 1.2; }
+
+  footer {
+    background: var(--coral);
+    color: var(--white);
+    text-align: center;
+    padding: 1.75rem 1.25rem 2rem;
+    font-size: 0.95rem;
+  }
+  footer a { color: var(--white); font-weight: 700; }
+  footer p { margin: 0.3rem 0; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="app-icon" src="images/playstore-icon-512.png" width="112" height="112" alt="Mallow Blocks app icon">
+  <h1 class="title"><span>Mallow</span><span>Blocks</span></h1>
+  <p class="tagline">A cozy block puzzle with the cutest marshmallow friends.</p>
+  <a class="cta" href="https://play.google.com/store/apps/details?id=app.mallowblocks.game">Try the beta on Google Play</a>
+  <figure class="screenshot">
+    <img src="images/screenshot_1.png" width="1080" height="1920" alt="Mallow Blocks game board with colorful blocks">
+  </figure>
+</header>
+
+<main>
+  <section class="how" id="how">
+    <h2>Drag, drop, pop!</h2>
+    <p>Place blocks on the 8×8 board. Fill a whole row or column and it clears with a satisfying pop.</p>
+    <div class="mini-board" aria-hidden="true">
+      <i></i><i class="c3"></i><i class="c3"></i><i></i><i></i><i class="c2"></i><i></i><i></i>
+      <i></i><i class="c3"></i><i></i><i></i><i class="c5"></i><i class="c2"></i><i class="c2"></i><i></i>
+      <i class="c4"></i><i class="c4"></i><i></i><i></i><i class="c5"></i><i></i><i></i><i></i>
+      <i class="row"></i><i class="row"></i><i class="row"></i><i class="row"></i><i class="row"></i><i class="row"></i><i class="row"></i><i class="row"></i>
+      <i></i><i class="c1"></i><i class="c1"></i><i></i><i></i><i></i><i class="c3"></i><i></i>
+      <i></i><i class="c1"></i><i></i><i></i><i class="c2"></i><i></i><i class="c3"></i><i></i>
+      <i class="c5"></i><i></i><i></i><i></i><i class="c2"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i>
+      <i class="c5"></i><i class="c5"></i><i></i><i class="c1"></i><i></i><i></i><i></i><i class="c4"></i>
+    </div>
+    <ul class="steps">
+      <li>Drag the blocks onto the board</li>
+      <li>Fill a row or column to clear it</li>
+      <li>Clear lines back to back for big combos</li>
+      <li>Plan ahead: the game ends when nothing fits</li>
+    </ul>
+  </section>
+
+  <section class="modes">
+    <div class="modes-inner">
+      <h2>Three ways to play</h2>
+      <ul class="mode-grid">
+        <li><span class="tag t1">Endless</span><strong>Classic</strong>No levels, no timer. Just you, the board and your best score.</li>
+        <li><span class="tag t2">Levels</span><strong>Adventure</strong>Travel through themed worlds, each with its own board and a chest waiting at the end.</li>
+        <li><span class="tag t3">Every day</span><strong>Daily Challenge</strong>A new goal every day, with the same board for everyone.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="gallery">
+    <h2>Take a look</h2>
+    <div class="strip">
+      <img src="images/screenshot_2.png" width="1080" height="1920" alt="Mallow Blocks screenshot 2" loading="lazy">
+      <img src="images/screenshot_3.png" width="1080" height="1920" alt="Mallow Blocks screenshot 3" loading="lazy">
+      <img src="images/screenshot_4.png" width="1080" height="1920" alt="Mallow Blocks screenshot 4" loading="lazy">
+      <img src="images/screenshot_5.png" width="1080" height="1920" alt="Mallow Blocks screenshot 5" loading="lazy">
+      <img src="images/screenshot_6.png" width="1080" height="1920" alt="Mallow Blocks screenshot 6" loading="lazy">
+    </div>
+  </section>
+
+  <section class="play">
+    <div class="play-card">
+      <h2>Made to keep you smiling</h2>
+      <ul class="features">
+        <li><span class="ico" style="background:var(--butter)">🎁</span>
+          <div><strong>Rewards every day</strong>Daily rewards, a free Mallow Gift every few hours, the Daily Wheel and a special chest every 5 days.</div></li>
+        <li><span class="ico" style="background:var(--lilac)">✨</span>
+          <div><strong>Collect &amp; customize</strong>Unlock block styles like jelly, wood, candy, crystal and neon, change your board and fill your sticker album.</div></li>
+        <li><span class="ico" style="background:var(--mint)">🔨</span>
+          <div><strong>Helpful power-ups</strong>Hammer, Bomb and Swap get you out of tight spots. Undo a move or ask for a hint when you're stuck.</div></li>
+        <li><span class="ico" style="background:var(--sky)">📶</span>
+          <div><strong>Play anywhere</strong>Portrait, one hand, no Wi-Fi needed.</div></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="privacy.html">Privacy Policy</a></p>
+  <p>Questions? Write to <a href="mailto:steradigitalstudios@gmail.com">steradigitalstudios@gmail.com</a></p>
+  <p>&copy; 2026 Stera Digital Studios · Mallow Blocks</p>
+</footer>
+
+</body>
+</html>
